@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "Google Translate Recorder",
+  "version": "0.0.1",
+  "background": {
+    "page": "background.html"
+  },
+  "permissions": [
+    "webRequest",
+    "*://translate.google.com/"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://translate.google.com/*"],
+      "js": ["content/catcher.js"]
+    }
+  ],
+  "web_accessible_resources": ["content/catcher_injected.js"],
+  "externally_connectable": {
+    "matches": ["*://translate.google.com/*"]
+  }
+}
