@@ -35,13 +35,39 @@ function isOptional(expectation) {
     }
 }
 
-function matchArray(response, expectation, path) {
+function format(object) {
+     if (isArray(object)) {
+         return '[' + object.length +
+             ']: [' +
+             object.map(function (entry){ return format(entry); }).join(',') +
+             ']';
+     }
+     if ('object' == typeof object && null !== object) {
+         return '{' + Object.keys(object).map(function(key){
+             return key + ':' + format(object(key));
+         }).join(',') + '}';
+     }
+     if ('undefined' == typeof object) {
+         return 'undefined';
+     }
+     if (null === object) {
+         return 'null';
+     }
+     if ('number' == typeof object) {
+         return '' + object;
+     }
+     if ('string' == typeof object) {
+         return '\'' + object +'\'';
+     }
+     return (typeof object) + ': ' + object;
+}
 
+function matchArray(response, expectation, path) {
     if (!isArray(response)) {
        if (('undefined' != typeof response) && null !== response) {
-          return path + ': expected array, got: ' +  + response + ' of type ' + (typeof response) + '\n';
+          return path + ': expected ['+response.length+'], got: ' + format(response) + '\n';
        } else if (!isOptional(expectation)) {
-          return path + ': expected array, got undefined\n';
+          return path + ': expected ['+response.length+'], got undefined\n';
        } else {
           // Missing optional field: not an error
           return '';
@@ -51,7 +77,7 @@ function matchArray(response, expectation, path) {
     var result = '';
     var expected = expectedLength(expectation);
     if (response.length > expected) {
-        result += path + ': expected ' + expected + ', got: ' + response.length + ' elements\n';
+        result += path + ': expected ' + expected + ', got: ' + response.length + ' elements ('+ format(response) +')\n';
     }
     var limit = expected;
     if (limit > response.length) {
@@ -62,7 +88,7 @@ function matchArray(response, expectation, path) {
     }
     for (var i=limit; i<expected; ++i) {
         if (!isOptional(expectation[i])) {
-            result += path + '[' + i + ']' + ': type mismatch, expected: ' + expectation + ', got: undefined\n';
+            result += path + '[' + i + ']' + ': expected: ' + expectation + ', got: undefined\n';
         }
     }
     return result;
@@ -77,8 +103,8 @@ function matchPrimitive(response, expectation, path) {
         (optional && ('undefined' == typeof response || null === response))
         || expectation == (typeof response)
         ? ''
-        : path + ': type mismatch, expected: ' + expectation
-            + ', got: ' + response + ' of type ' + (typeof response) + '\n'
+        : path + ': expected: ' + expectation
+            + ', got: ' + format(response) + '\n'
     );
 }
 
@@ -91,8 +117,7 @@ function match(response, expectation, opt_path) {
         result += matchPrimitive(response, expectation, path);
     } else if ('undefined' == typeof expectation) {
         result += ('undefined' == (typeof response) || null === response ? '' : path
-        + ': type mismatch, expected: undefined, got: '
-        + response + ' of type ' + (typeof response) + '\n');
+        + ': expected: undefined, got: ' + format(response) + '\n');
     } else if ('sequenceOf' in expectation) {
         // NOTE: sequence assumed optional
         if (isArray(response)) {

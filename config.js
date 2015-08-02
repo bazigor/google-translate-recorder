@@ -1,4 +1,7 @@
-cfg = {
+// define both exports.cfg and cfg global var, works
+// with and without module loader.
+exports == exports || {};
+exports.cfg = cfg = {
     responseExpectation:[
          // 0
          [

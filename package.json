@@ -1,0 +1,30 @@
+{
+  "name": "google-translate-recorder",
+  "version": "0.0.1",
+  "description": "Record google translate requests ",
+  "main": "main.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bazigor/google-translate-recorder.git"
+  },
+  "keywords": [
+    "google-chrome",
+    "chrome-extension",
+    "google-translate"
+  ],
+  "author": "Igor Bazarny",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bazigor/google-translate-recorder/issues"
+  },
+  "homepage": "https://github.com/bazigor/google-translate-recorder#readme",
+  "devDependencies": {
+    "jasmine": "^2.3.1"
+  }
+}
